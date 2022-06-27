@@ -17,6 +17,7 @@ export default new Vuex.Store({
     ticketFloor: 0,
     occupationFloor: 0,
     controlEndPointList: [],
+    lastFloor:0
 
   },
   getters: {
@@ -32,6 +33,7 @@ export default new Vuex.Store({
     controlEndPointList: (state) => state.controlEndPointList,
     ticketFloor:(state) => state.ticketFloor,
     occupationFloor:(state) => state.occupationFloor,
+    lastFloor: (state) => state.lastFloor
   },
   mutations: {
     setcontextInfos: (state, contextInfos) => (state.contextInfos = contextInfos),
@@ -42,11 +44,13 @@ export default new Vuex.Store({
     setRoomArea: (state, roomArray) => (state.roomAreas = roomArray),
     setRoomInfo: (state, info) => (state.roomInfo = info),
     setControlEndPointList: (state, resp) => (state.controlEndPointList = resp),
-    setBuildingInfos: (state, buildingInfo) => (state.buildingInfo= buildingInfo)
+    setBuildingInfos: (state, buildingInfo) => (state.buildingInfo= buildingInfo),
+    setlastFloor: (state, lastFloor) => (state.lastFloor = lastFloor)
   },
   actions: {
     async getBuildingInfos({ commit }, node) {
       const resp = await getBuildingInfosApi();
+      const lastFloor = resp.children[0].children.length-1;
       const info = () => {
         return { id: 0, name: '', area: 0, ticket: 0, occupation: 0 }
       }
@@ -93,6 +97,7 @@ export default new Vuex.Store({
       commit('setBuildingInfos', buildingInfo)
       commit('setcontextInfos', resp);
       commit('setFloorList', floorList);
+      commit('setlastFloor', lastFloor)
     },
     async getBuildingArea({ commit }, node) {
       if (node != undefined && node.type === 'geographicBuilding') {

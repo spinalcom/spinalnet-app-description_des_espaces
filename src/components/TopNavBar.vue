@@ -16,11 +16,11 @@
         </v-btn>
         </template>
       </v-menu>
-      <v-menu offset-y>
+      <v-menu offset-y :close-on-content-click="false">
         <template v-slot:activator="{ on }">
-        <v-btn v-on="on"  width="150px" color="#14202c" class="mr-16 white--text ">
+        <v-btn v-on="on"  width="200px" color="#14202c" class="mr-16 white--text ">
           <v-icon>expand_more</v-icon>
-          <span class="text-capitalize" style="float:left" >{{contextInfos.name}}</span>
+          <span class="text-capitalize" style="float:left" >Patrimoine</span>
         </v-btn>
         </template>
         <select-menu

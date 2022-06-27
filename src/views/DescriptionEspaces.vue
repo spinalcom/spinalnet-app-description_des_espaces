@@ -1,15 +1,15 @@
 <template >
   <div class="content"> 
     <div class="information">
-      <v-layout row>    
-        <v-flex xs4>
+      <v-layout row wrap>    
+        <v-flex xs12 md4>
           <v-btn height="90" block style="border-radius: 10px">surface totale {{ totalArea }} <span > m²</span></v-btn>
         </v-flex>
-        <v-flex xs4>
+        <v-flex xs12 md4>
           <v-btn height="90" block style="border-radius: 10px" v-if="type === 'geographicContext'">Tickets en cours {{ buildingInfo[0].ticket }}</v-btn>
           <v-btn height="90" block style="border-radius: 10px" v-if="type === 'geographicRoom'">Tickets en cours {{ ticketFloor }}</v-btn>
         </v-flex>
-        <v-flex xs4 >
+        <v-flex xs12 md4>
           <v-btn height="90" block style="border-radius: 10px" v-if="type === 'geographicContext'">taux d'occupation {{ buildingInfo[0].occupation}} %</v-btn>
           <v-btn height="90" block style="border-radius: 10px" v-if="type === 'geographicRoom'">taux d'occupation {{ Math.round(occupationFloor)}} %</v-btn>
         </v-flex>
@@ -110,7 +110,8 @@ div.layout{
 }
 .information{
   display: flex;
-  height: 15%;
+  min-height: 15vh;
+  max-height: 45vh;
   margin: 5px 0px;
 }
 .table{
