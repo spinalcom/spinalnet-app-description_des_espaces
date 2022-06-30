@@ -80,7 +80,6 @@ export default {
     created(){
       this.getBuildingInfos();
       this.getBuildingArea();
-      
     }
   }
 </script>

@@ -1,22 +1,22 @@
 <template>
   <div class="building-list">   
       <v-list color="#14202c">
-        <!-- {'margin-left': `${ depth * 10 }px` } -->
         <div class="border-left-container" :style="{'margin-left': `${ depth * 15 }px`,}">
         <div class="border-left"  :style="[`${node.type}` === 'geographicBuilding' || `${node.type}` === 'geographicContext' || lastFloor === index ? last : notLast]">
-        <v-list-item style="height: 10px" :id="'id_'+ node.dynamicId" :style="[selected ? selectedStyle : '']">
+        <v-list-item style="height: 10px" :id="node.dynamicId" :style="[selected ? selectedStyle : '']">
           <v-list-item-title
             class="white--text"
             >
             <div class="menuItem">
               <div class="nodeName">
                 <div class="divColor"></div>
-                <span @click="onClick(node.dynamicId, node, 'id_' + node.dynamicId)" style=" cursor: pointer">{{ node.name }}{{index}}</span>
+                <span @click="onClick(node.dynamicId, node)" style=" cursor: pointer">{{ node.name }}</span>
               </div>
               <v-icon 
                     class="icon grey--text toggleUpDown"
                     :class='{ "rotate": expanded }'
                     @click.stop.prevent="expanded = !expanded"
+                    @click="changeBorderColor(node.dynamicId, node)"
                     >$expand</v-icon>
             </div>
           </v-list-item-title>
@@ -26,7 +26,9 @@
       </v-list>
       <div v-if="expanded && depth !== 2" >
         <select-menu offset-y
-        v-for="(child, index) in node.children"
+        v-for="(child, index) in node.children" 
+        :prevCurrent="prevCurrent"
+        :buildingId="buildingId"
         :key="child.dynamicId"
         :node="child"
         :index= index
@@ -43,6 +45,11 @@ import { mapActions, mapGetters } from "vuex";
 export default {
   name:'SelectMenu',
   props: {
+    prevCurrent: Object,
+    buildingId:{
+      type:Number,
+      default:0
+    },
     node:Object,
     depth:{
       type:Number,
@@ -61,7 +68,7 @@ export default {
       selected: false,
       activitedId: 0,
       prev: 0,
-      next: 0,
+      current: 0,
       last :{
         borderLeft: '1px solid rgb(125,185,153)',
         borderImage: 'linear-gradient(to bottom, rgba(54, 70, 94,1) 50% ,rgba(54, 70, 94,0) 50%)',
@@ -86,20 +93,32 @@ export default {
       e.preventDefault();
       this.expanded = !this.expanded;
     },
-    changeBorderColor(id_){
-      this.prev = this.next;
-      this.next = id_;
-      console.log('prev', this.prev);
-      console.log('next', this.next);
-      // document.getElementById(this.next).style.border = '1px solid red';
-      // if(this.prev)
-      // document.getElementById(this.prev).style.border = 'none';
-      // this.prev = id_;
-      // console.log('prev', this.prev);
+    changeBorderColor(id, node){
+
+      // eslint-disable-next-line
+      this.prevCurrent.prev = this.prevCurrent.current;
+      // eslint-disable-next-line
+      this.prevCurrent.current = id;
+      if (node.type == 'geographicContext' || node.type == 'geographicBuilding'){
+        document.getElementById(this.prevCurrent.current).style.border = '1px solid white'; 
+        document.getElementById(this.prevCurrent.current).style.border = '1px solid white';
+        if (node.type == 'geographicBuilding'){
+          // eslint-disable-next-line
+          this.buildingId = id;
+          // eslint-disable-next-line
+        }
+      }else if(node.type == 'geographicFloor' && this.prevCurrent.current != this.prevCurrent.prev){
+        document.getElementById(this.prevCurrent.current).style.border = '1px solid white';
+        document.getElementById(this.prevCurrent.prev).style.border = '1px solid #36465e';
+         if(this.buildingId != 0)
+        document.getElementById(this.buildingId).style.border = '1px solid white';
+        }else if(this.prevCurrent.current == this.prevCurrent.prev){
+          document.getElementById(this.prevCurrent.current).style.border = '1px solid white';
+        }  
     
     },
-    onClick(id, node, id_){
-      this.changeBorderColor(id_);
+    onClick(id, node){
+      this.changeBorderColor(id, node)
       this.getFloorArea(id);
       this.getBuildingArea(node);
       this.getBuildingInfos(node);
@@ -119,21 +138,13 @@ v-flex{
 .v-list{
   padding: 0px;
 }
-/* .border-left-container{
-  border-left: 1px solid #36465e;
-  padding: 0px 5px;
-  position: relative;
-  box-sizing: border-box;
-} */
 .border-left{
   position: relative;
-  /* border-left: 1px solid rgb(54, 70, 94); */
   padding: 0px 0px;
 }
 
 .border-left:before{
   content: "";
-  /* margin: 0px 5px; */
   border-bottom: 1px solid #36465e;
   position: absolute;
   left: 0;
@@ -144,11 +155,10 @@ v-flex{
 .v-list-item{
   padding: 2px 2px;
   margin: 0px 5px 0px 10px;
-  border: 1px solid white;
+  border: 1px solid #36465e;
   box-sizing: border-box;
   border-radius: 5px;
 }
-/* v-list-item__title white--text */
 .v-list-item__title{
   padding: 5px;
 }

@@ -23,8 +23,10 @@
           <span class="text-capitalize" style="float:left" >Patrimoine</span>
         </v-btn>
         </template>
-        <select-menu
-        :node='contextInfos'/>
+        <select-menu 
+        :prevCurrent="prevCurrent"
+        :node='contextInfos'
+        :buildingId="buildingId"/>
       </v-menu>
     </v-toolbar>
     </v-flex>
@@ -35,6 +37,15 @@ import { mapActions, mapGetters } from "vuex";
 import SelectMenu from './SelectMenu.vue';
 export default {
   name:'TopNavBar',
+  data() {
+    return {
+      prevCurrent : {
+        prev : 0,
+        current: 0
+      },
+      buildingId: 0
+    }
+  },
   components:{
     SelectMenu,
   },
